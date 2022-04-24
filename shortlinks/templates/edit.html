@@ -1,0 +1,10 @@
+{{ template "z_header.html" .}}
+{{ template "form.html" .}}
+
+<ol>
+{{range .History}}
+<li><a href="{{.To}}">{{.To}}</a> - {{.When}}</li>
+{{end}}
+</ol>
+
+{{ template "z_footer.html" .}}

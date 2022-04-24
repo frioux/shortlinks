@@ -1,0 +1,10 @@
+{{ template "z_header.html" .}}
+{{ template "form.html" .}}
+
+<ul>
+{{range .Shortlinks}}
+<li><a href="{{.To}}">{{.From}}</a> [<a href="/_edit/{{.From}}">edit</a>]</li>
+{{end}}
+</ul>
+
+{{ template "z_footer.html" .}}
