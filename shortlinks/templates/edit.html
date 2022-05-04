@@ -7,4 +7,9 @@
 {{end}}
 </ol>
 
+<form method="POST" action="/_delete/">
+        <input name="from" value="{{.From}}" type="hidden" />
+        <input value="Delete" type="submit" />
+</form>
+
 {{ template "z_footer.html" .}}

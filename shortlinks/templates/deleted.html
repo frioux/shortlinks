@@ -1,0 +1,9 @@
+{{ template "z_header.html" .}}
+
+<ul>
+{{range .Shortlinks}}
+<li><a href="{{.To}}">{{.From}}</a></li>
+{{end}}
+</ul>
+
+{{ template "z_footer.html" .}}

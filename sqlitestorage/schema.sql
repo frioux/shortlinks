@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS shortlinks (
         "from",
         "to",
+        "deleted",
         PRIMARY KEY ("from")
 );
 
