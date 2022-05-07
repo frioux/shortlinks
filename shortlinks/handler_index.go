@@ -14,7 +14,7 @@ func (i index) To() string     { return "" }
 func (i index) From() string   { return "" }
 func (i index) Submit() string { return "Create" }
 
-func indexHandler(db DB) http.Handler {
+func indexHandler(db PublicDB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			sl, err := db.AllShortlinks()

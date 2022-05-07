@@ -11,18 +11,30 @@ type Server struct {
 }
 
 func (s Server) ListenAndServe(listen string) error {
-	http.Handle("/", indexHandler(s.DB))
-	http.Handle("/_delete/", deleteHandler(s.DB))
-	http.Handle("/_edit/", editHandler(s.DB))
-	http.Handle("/_favicon", http.HandlerFunc(faviconHandler))
+	mux := http.NewServeMux()
+
+	mux.Handle("/", indexHandler(s.DB))
+	mux.Handle("/_delete/", deleteHandler(s.DB))
+	mux.Handle("/_edit/", editHandler(s.DB))
+	mux.Handle("/_favicon", http.HandlerFunc(faviconHandler))
 
 	if dbd, ok := s.DB.(DBDeleted); ok {
-		http.Handle("/_deleted/", deletedHandler(dbd))
+		mux.Handle("/_deleted/", deletedHandler(dbd))
 	}
 
 
-	fmt.Fprintln(os.Stderr, "serving at", listen)
-	return http.ListenAndServe(listen, nil)
+	fmt.Fprintln(os.Stderr, "rw serving at", listen)
+	return http.ListenAndServe(listen, mux)
+}
+
+func (s Server) PublicListenAndServe(listen string) error {
+	mux := http.NewServeMux()
+
+	mux.Handle("/", publicIndexHandler(s.DB))
+	mux.Handle("/_favicon", http.HandlerFunc(faviconHandler))
+
+	fmt.Fprintln(os.Stderr, "public serving at", listen)
+	return http.ListenAndServe(listen, mux)
 }
 
 func _500(w http.ResponseWriter, err error) {

@@ -18,9 +18,10 @@ func main() {
 
 func run() error {
 	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	var listen, dsn string
+	var publicListen, listen, dsn string
 
-	fs.StringVar(&listen, "listen", ":8080", "address to listen on")
+	fs.StringVar(&listen, "listen", ":8080", "address to listen on for read-write server")
+	fs.StringVar(&publicListen, "public-listen", "", "address to listen on for public server")
 	fs.StringVar(&dsn, "db", "file:db.db", "database file")
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		return err
@@ -30,5 +31,12 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	return shortlinks.Server{DB: db}.ListenAndServe(listen)
+
+	s := shortlinks.Server{DB: db}
+
+	if publicListen != "" {
+		go s.PublicListenAndServe(publicListen)
+	}
+
+	return s.ListenAndServe(listen)
 }

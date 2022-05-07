@@ -13,18 +13,13 @@ type History struct {
 // DB is used by the Server to store shortlinks and related history.  May
 // optionally be a DBDeleted.
 type DB interface {
-	// Shortlink loads data for from.
-	Shortlink(from string) (Shortlink, error)
+	PublicDB
 
 	// CreateShortlink inserts or updates Shortlink.
 	CreateShortlink(Shortlink) error
 
 	// DeleteShortlink deletes a shortlink from the database.
 	DeleteShortlink(from string) error
-
-	// AllShortlinks loads a list of shortlinks for use in the index.
-	// Hardcoding a nil return value is supported.
-	AllShortlinks() ([]Shortlink, error)
 
 	// History loads history for a given shortlink.  Hardcoding a nil
 	// return value is supported.
@@ -33,6 +28,18 @@ type DB interface {
 	// InsertHistory stores the history for a newly inserted/updated
 	// shortlink.  Hardcoding a nil return value is supported.
 	InsertHistory(History) error
+}
+
+// PublicDB is meant to be used in a context where users do not have
+// the ability to modify the database.  It's both read-only and does
+// not provide access to history.
+type PublicDB interface {
+	// Shortlink loads data for from.
+	Shortlink(from string) (Shortlink, error)
+
+	// AllShortlinks loads a list of shortlinks for use in the index.
+	// Hardcoding a nil return value is supported.
+	AllShortlinks() ([]Shortlink, error)
 }
 
 type DBDeleted interface {
