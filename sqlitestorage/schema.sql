@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS shortlinks (
 CREATE TABLE IF NOT EXISTS history (
         "from",
         "to",
-        "when"
+        "when",
+        "who"
 );

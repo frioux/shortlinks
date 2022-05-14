@@ -20,11 +20,20 @@ func (e edit) Title() string {
 	return "Edit " + e.From
 }
 
-func editHandler(db DB) http.Handler {
+func editHandler(db DB, auth Auth) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		from := strings.TrimPrefix(r.URL.Path, "/_edit/")
 
 		if r.Method == "POST" {
+			var u string
+			if auth != nil {
+				var err error
+				u, err = auth.User(r)
+				if err != nil {
+					_403(w, err)
+					return
+				}
+			}
 			if err := r.ParseForm(); err != nil {
 				_500(w, err)
 				return
@@ -34,7 +43,7 @@ func editHandler(db DB) http.Handler {
 				from = r.Form.Get("from")
 			}
 
-			if err := db.InsertHistory(History{From: from, To: r.Form.Get("to")}); err != nil {
+			if err := db.InsertHistory(History{From: from, To: r.Form.Get("to"), Who: u}); err != nil {
 				_500(w, err)
 				return
 			}

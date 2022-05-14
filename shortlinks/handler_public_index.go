@@ -1,10 +1,10 @@
 package shortlinks
 
 import (
-	"net/http"
-	"strings"
 	"fmt"
+	"net/http"
 	"os"
+	"strings"
 )
 
 func publicIndexHandler(db PublicDB) http.Handler {

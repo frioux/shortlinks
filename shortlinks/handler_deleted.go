@@ -8,7 +8,7 @@ type deleted struct {
 	Shortlinks []Shortlink
 }
 
-func (d deleted) Title() string  { return "deleted links" }
+func (d deleted) Title() string { return "deleted links" }
 
 func deletedHandler(db DBDeleted) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -26,4 +26,3 @@ func deletedHandler(db DBDeleted) http.Handler {
 		return
 	})
 }
-

@@ -54,7 +54,11 @@ func (c Client) CreateShortlink(s shortlinks.Shortlink) error {
 	return nil
 }
 
-func (c Client) DeleteShortlink(from string) error {
+func (c Client) DeleteShortlink(from, who string) error {
+	if err := c.InsertHistory(shortlinks.History{From: from, To: "«deleted»", Who: who}); err != nil {
+		return fmt.Errorf("couldn't insert delete history for shortlink (%s): %w", from, err)
+	}
+
 	_, err := c.db.Exec(`UPDATE shortlinks SET "deleted"=CURRENT_TIMESTAMP WHERE "from" = ?`, from)
 
 	if err != nil {
@@ -83,7 +87,7 @@ func (c Client) DeletedShortlinks() ([]shortlinks.Shortlink, error) {
 
 func (c Client) History(from string) ([]shortlinks.History, error) {
 	ret := []shortlinks.History{}
-	err := c.db.Select(&ret, `SELECT "to", "from", "when" FROM history WHERE "from" = ?`, from)
+	err := c.db.Select(&ret, `SELECT "to", "from", "when", "who" FROM history WHERE "from" = ?`, from)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't load history (for %s): %w", from, err)
 	}
@@ -91,7 +95,7 @@ func (c Client) History(from string) ([]shortlinks.History, error) {
 }
 
 func (c Client) InsertHistory(h shortlinks.History) error {
-	_, err := c.db.Exec(`INSERT INTO history("from", "to", "when") VALUES (?, ?, CURRENT_TIMESTAMP)`, h.From, h.To)
+	_, err := c.db.Exec(`INSERT INTO history("from", "to", "when", "who") VALUES (?, ?, CURRENT_TIMESTAMP, ?)`, h.From, h.To, h.Who)
 	if err != nil {
 		return fmt.Errorf("couldn't insert history (%s): %w", h.From, err)
 	}
