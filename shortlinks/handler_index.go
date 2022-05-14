@@ -14,6 +14,8 @@ func (i index) To() string     { return "" }
 func (i index) From() string   { return "" }
 func (i index) Submit() string { return "Create" }
 
+func (i index) Description() string   { return "" }
+
 func indexHandler(db PublicDB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {

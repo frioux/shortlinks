@@ -1,9 +1,16 @@
 <form action="/_edit/" method="post">
-    <label for="from">From:</label>
-    <input type="text" name="from" required value="{{.From}}">
 
-    <label for="to">To:</label>
-    <input type="text" name="to" required value="{{.To}}">
+    <label>From:
+            <input type="text" name="from" required value="{{.From}}">
+    </label>
+
+    <label>To:
+            <input type="text" name="to" required value="{{.To}}">
+    </label>
+
+    <label>Description:
+            <input type="text" name="description" value="{{.Description}}">
+    </label>
 
     <input type="submit" value="{{.Submit}}">
 </form>

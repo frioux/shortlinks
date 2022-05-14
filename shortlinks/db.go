@@ -2,12 +2,12 @@ package shortlinks
 
 // Shortlink redirects a user from /From to To.
 type Shortlink struct {
-	From, To string
+	From, To, Description string
 }
 
 // History represents a given version of a Shortlink.
 type History struct {
-	From, To, When, Who string
+	From, To, When, Who, Description string
 }
 
 // DB is used by the Server to store shortlinks and related history.  May

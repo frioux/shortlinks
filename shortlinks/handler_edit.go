@@ -43,13 +43,21 @@ func editHandler(db DB, auth Auth) http.Handler {
 				from = r.Form.Get("from")
 			}
 
-			if err := db.InsertHistory(History{From: from, To: r.Form.Get("to"), Who: u}); err != nil {
+			if err := db.InsertHistory(History{
+				From: from,
+				To:   r.Form.Get("to"),
+				Who:  u,
+
+				Description: r.Form.Get("description"),
+			}); err != nil {
 				_500(w, err)
 				return
 			}
 			if err := db.CreateShortlink(Shortlink{
 				To:   r.Form.Get("to"),
 				From: from,
+
+				Description: r.Form.Get("description"),
 			}); err != nil {
 				_500(w, err)
 				return

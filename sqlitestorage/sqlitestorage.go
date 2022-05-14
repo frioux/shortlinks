@@ -35,7 +35,7 @@ type Client struct {
 
 func (c Client) Shortlink(from string) (shortlinks.Shortlink, error) {
 	ret := shortlinks.Shortlink{}
-	err := c.db.Get(&ret, `SELECT "from", "to" FROM shortlinks WHERE "from" = ? AND "deleted" IS NULL`, from)
+	err := c.db.Get(&ret, `SELECT "from", "to", "description" FROM shortlinks WHERE "from" = ? AND "deleted" IS NULL`, from)
 
 	if err != nil {
 		return ret, fmt.Errorf("couldn't load shortlink (%s): %w", from, err)
@@ -44,9 +44,12 @@ func (c Client) Shortlink(from string) (shortlinks.Shortlink, error) {
 }
 
 func (c Client) CreateShortlink(s shortlinks.Shortlink) error {
-	_, err := c.db.Exec(`INSERT INTO shortlinks("from", "to") VALUES (?, ?)
+	_, err := c.db.Exec(`INSERT INTO shortlinks("from", "to", "description") VALUES (?, ?, ?)
 			  ON CONFLICT("from") DO
-			  UPDATE SET "to"=excluded."to", "deleted" = null`, s.From, s.To)
+			  UPDATE SET
+			  "to"          = "excluded"."to",
+			  "deleted"     = null,
+			  "description" = "excluded"."description"`, s.From, s.To, s.Description)
 
 	if err != nil {
 		return fmt.Errorf("couldn't insert shortlink (%s): %w", s.From, err)
@@ -69,7 +72,7 @@ func (c Client) DeleteShortlink(from, who string) error {
 
 func (c Client) AllShortlinks() ([]shortlinks.Shortlink, error) {
 	ret := []shortlinks.Shortlink{}
-	err := c.db.Select(&ret, `SELECT "to", "from" FROM shortlinks WHERE "deleted" IS NULL ORDER BY "from"`)
+	err := c.db.Select(&ret, `SELECT "to", "from", "description" FROM shortlinks WHERE "deleted" IS NULL ORDER BY "from"`)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't load shortlinks: %w", err)
 	}
@@ -78,7 +81,7 @@ func (c Client) AllShortlinks() ([]shortlinks.Shortlink, error) {
 
 func (c Client) DeletedShortlinks() ([]shortlinks.Shortlink, error) {
 	ret := []shortlinks.Shortlink{}
-	err := c.db.Select(&ret, `SELECT "to", "from" FROM shortlinks WHERE "deleted" IS NOT NULL ORDER BY "from"`)
+	err := c.db.Select(&ret, `SELECT "to", "from", "description" FROM shortlinks WHERE "deleted" IS NOT NULL ORDER BY "from"`)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't load shortlinks: %w", err)
 	}
@@ -87,7 +90,7 @@ func (c Client) DeletedShortlinks() ([]shortlinks.Shortlink, error) {
 
 func (c Client) History(from string) ([]shortlinks.History, error) {
 	ret := []shortlinks.History{}
-	err := c.db.Select(&ret, `SELECT "to", "from", "when", "who" FROM history WHERE "from" = ?`, from)
+	err := c.db.Select(&ret, `SELECT "to", "from", "when", "who", "description" FROM history WHERE "from" = ?`, from)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't load history (for %s): %w", from, err)
 	}
@@ -95,7 +98,7 @@ func (c Client) History(from string) ([]shortlinks.History, error) {
 }
 
 func (c Client) InsertHistory(h shortlinks.History) error {
-	_, err := c.db.Exec(`INSERT INTO history("from", "to", "when", "who") VALUES (?, ?, CURRENT_TIMESTAMP, ?)`, h.From, h.To, h.Who)
+	_, err := c.db.Exec(`INSERT INTO history("from", "to", "when", "who", "description") VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)`, h.From, h.To, h.Who, h.Description)
 	if err != nil {
 		return fmt.Errorf("couldn't insert history (%s): %w", h.From, err)
 	}

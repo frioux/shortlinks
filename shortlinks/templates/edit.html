@@ -3,7 +3,7 @@
 
 <ol>
 {{range .History}}
-<li><a href="{{.To}}">{{.To}}</a> - {{.When}}{{if ne .Who ""}} by {{.Who}}{{end}}</li>
+<li><a href="{{.To}}">{{.To}}</a> - {{.When}}{{if ne .Who ""}} by {{.Who}}{{end}}{{if ne .Description ""}}<p>{{.Description}}</p>{{end}}</li>
 {{end}}
 </ol>
 
