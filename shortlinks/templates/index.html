@@ -3,7 +3,7 @@
 
 <ul>
 {{range .Shortlinks}}
-<li><a href="{{.To}}">{{.From}}</a> [<a href="/_edit/{{.From}}">edit</a>] {{if ne .Description ""}}<p>{{.Description}}</p>{{end}}</li>
+<li><a href="{{.To}}">{{.From}}</a> [<a href="/_edit/?from={{.From}}">edit</a>] {{if ne .Description ""}}<p>{{.Description}}</p>{{end}}</li>
 {{end}}
 </ul>
 

@@ -2,7 +2,6 @@ package shortlinks
 
 import (
 	"net/http"
-	"strings"
 )
 
 type edit struct {
@@ -22,7 +21,7 @@ func (e edit) Title() string {
 
 func editHandler(db DB, auth Auth) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		from := strings.TrimPrefix(r.URL.Path, "/_edit/")
+		from := r.URL.Query().Get("from")
 
 		if r.Method == "POST" {
 			var u string
