@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/frioux/shortlinks/shortlinks"
-	"github.com/frioux/shortlinks/sqlitestorage"
-	"github.com/frioux/shortlinks/tailscaleauth"
+	"github.com/frioux/shortlinks/storage/sqlitestorage"
+	"github.com/frioux/shortlinks/auth/tailscaleauth"
 )
 
 func main() {
