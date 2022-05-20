@@ -111,8 +111,8 @@ func (cl *Client) pkShortlinks(pk string) ([]shortlinks.Shortlink, error) {
 			return nil, err
 		}
 
-		var s shortlink
 		for _, itm := range o.Items {
+			var s shortlink
 			if err := attributevalue.UnmarshalMap(itm, &s); err != nil {
 				return ret, err
 			}
