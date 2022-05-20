@@ -214,8 +214,8 @@ func (cl *Client) History(from string) ([]shortlinks.History, error) {
 			return nil, err
 		}
 
-		var h history
 		for _, itm := range o.Items {
+			var h history
 			if err := attributevalue.UnmarshalMap(itm, &h); err != nil {
 				return ret, err
 			}
