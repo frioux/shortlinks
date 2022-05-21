@@ -1,3 +1,16 @@
+// package dynamodbstorage provides a client for storing shortlinks in Amazon
+// DynamoDB.
+//
+// The primary key is `pk` and the sort key is `sk`.
+//
+// Shortlinks have a `pk` of "s", and `sk` of their From value.
+//
+// Deleted shortlinks are exactly the same but with a `pk` of "d".
+//
+// History (previous versions of shortlinks) have a `pk` of "h" with their From
+// value appended (ie the history of the "frew" shortlink has a `pk` of
+// "hfrew") and an `sk` of the RFC3339 representation of the time that history
+// was created.
 package dynamodbstorage
 
 import (
