@@ -14,6 +14,11 @@ import (
 	"github.com/frioux/shortlinks/shortlinks"
 )
 
+const (
+	pkShortlink = "s"
+	pkDeletedShortlink = "d"
+)
+
 type Client struct {
 	DB *dynamodb.Client
 
@@ -63,7 +68,7 @@ func (cl *Client) Shortlink(from string) (shortlinks.Shortlink, error) {
 
 	gio, err := cl.DB.GetItem(context.Background(), &dynamodb.GetItemInput{
 		TableName: aws.String(cl.Table),
-		Key:       mustMarshal(shortlink{PK: "s", From: from}),
+		Key:       mustMarshal(shortlink{PK: pkShortlink, From: from}),
 	})
 	if err != nil {
 		return ret, err
@@ -84,7 +89,7 @@ func (cl *Client) CreateShortlink(sl shortlinks.Shortlink) error {
 	if _, err := cl.DB.PutItem(context.Background(), &dynamodb.PutItemInput{
 		TableName: aws.String(cl.Table),
 		Item: mustMarshal(shortlink{
-			PK:   "s",
+			PK:   pkShortlink,
 			From: sl.From,
 			To:   sl.To,
 
@@ -129,7 +134,7 @@ func (cl *Client) pkShortlinks(pk string) ([]shortlinks.Shortlink, error) {
 	return ret, nil
 }
 
-func (cl *Client) AllShortlinks() ([]shortlinks.Shortlink, error) { return cl.pkShortlinks("s") }
+func (cl *Client) AllShortlinks() ([]shortlinks.Shortlink, error) { return cl.pkShortlinks(pkShortlink) }
 
 func (cl *Client) DeleteShortlink(from, who string) error {
 	sl, err := cl.Shortlink(from)
@@ -150,7 +155,7 @@ func (cl *Client) DeleteShortlink(from, who string) error {
 	if _, err := cl.DB.PutItem(context.Background(), &dynamodb.PutItemInput{
 		TableName: aws.String(cl.Table),
 		Item: mustMarshal(shortlink{
-			PK:   "d",
+			PK:   pkDeletedShortlink,
 			From: sl.From,
 			To:   sl.To,
 
@@ -162,7 +167,7 @@ func (cl *Client) DeleteShortlink(from, who string) error {
 
 	_, err = cl.DB.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(cl.Table),
-		Key:       mustMarshal(shortlink{PK: "s", From: from}),
+		Key:       mustMarshal(shortlink{PK: pkShortlink, From: from}),
 	})
 	if err != nil {
 		return err
@@ -171,7 +176,7 @@ func (cl *Client) DeleteShortlink(from, who string) error {
 	return nil
 }
 
-func (cl *Client) DeletedShortlinks() ([]shortlinks.Shortlink, error) { return cl.pkShortlinks("d") }
+func (cl *Client) DeletedShortlinks() ([]shortlinks.Shortlink, error) { return cl.pkShortlinks(pkDeletedShortlink) }
 
 type history struct {
 	// PK is h (for history) followed by the From value
