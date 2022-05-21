@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 
 	"github.com/frioux/shortlinks/auth/tailscaleauth"
 	"github.com/frioux/shortlinks/shortlinks"
@@ -22,14 +26,22 @@ func run() error {
 	fs := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 	var (
 		publicListen, listen, dsn string
-		tailscale, dynamodb       bool
+		tailscale, useDDB         bool
+
+		ddbTable, ddbRegion string
 	)
 
 	fs.StringVar(&listen, "listen", ":8080", "address to listen on for read-write server")
 	fs.StringVar(&publicListen, "public-listen", "", "address to listen on for public server")
+
 	fs.StringVar(&dsn, "db", "file:db.db", "database file")
+
 	fs.BoolVar(&tailscale, "tailscale", false, "enable tailscale auth for read-write server")
-	fs.BoolVar(&dynamodb, "dynamodb", false, "enable dynamodb for storage")
+
+	fs.BoolVar(&useDDB, "dynamodb", false, "enable dynamodb for storage")
+	fs.StringVar(&ddbTable, "dynamodb-table", "dev-zrorg--shortlinks", "table to use for DDB")
+	fs.StringVar(&ddbRegion, "dynamodb-region", "us-west-2", "region to use for DDB")
+
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		return err
 	}
@@ -38,10 +50,17 @@ func run() error {
 		db  shortlinks.DB
 		err error
 	)
-	if dynamodb {
-		db, err = dynamodbstorage.NewClient()
+	if useDDB {
+		cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(ddbRegion))
 		if err != nil {
 			return err
+		}
+
+		svc := dynamodb.NewFromConfig(cfg)
+
+		db = &dynamodbstorage.Client{
+			DB:    svc,
+			Table: ddbTable,
 		}
 	} else {
 		db, err = sqlitestorage.Connect(dsn)

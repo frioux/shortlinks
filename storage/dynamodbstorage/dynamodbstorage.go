@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -23,20 +22,6 @@ type Client struct {
 	DB *dynamodb.Client
 
 	Table string
-}
-
-func NewClient() (*Client, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
-	if err != nil {
-		return nil, err
-	}
-
-	svc := dynamodb.NewFromConfig(cfg)
-
-	return &Client{
-		DB:    svc,
-		Table: "dev-zrorg--shortlinks",
-	}, nil
 }
 
 type shortlink struct {
