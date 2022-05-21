@@ -15,9 +15,9 @@ import (
 )
 
 type Client struct {
-	db *dynamodb.Client
+	DB *dynamodb.Client
 
-	table string
+	Table string
 }
 
 func NewClient() (*Client, error) {
@@ -29,8 +29,8 @@ func NewClient() (*Client, error) {
 	svc := dynamodb.NewFromConfig(cfg)
 
 	return &Client{
-		db:    svc,
-		table: "dev-zrorg--shortlinks",
+		DB:    svc,
+		Table: "dev-zrorg--shortlinks",
 	}, nil
 }
 
@@ -43,26 +43,34 @@ type shortlink struct {
 	Description string `dynamodbav:"d,omitempty"`
 }
 
+func mustMarshal(v interface{}) map[string]types.AttributeValue {
+	av, err := attributevalue.MarshalMap(v)
+	if err != nil {
+		panic(err)
+	}
+
+	return av
+}
+
+func mustUnmarshal(av map[string]types.AttributeValue, d interface{}) {
+	if err := attributevalue.UnmarshalMap(av, d); err != nil {
+		panic(err)
+	}
+}
+
 func (cl *Client) Shortlink(from string) (shortlinks.Shortlink, error) {
 	var ret shortlinks.Shortlink
 
-	av, err := attributevalue.MarshalMap(shortlink{PK: "s", From: from})
-	if err != nil {
-		return ret, err
-	}
-
-	gio, err := cl.db.GetItem(context.Background(), &dynamodb.GetItemInput{
-		TableName: aws.String(cl.table),
-		Key:       av,
+	gio, err := cl.DB.GetItem(context.Background(), &dynamodb.GetItemInput{
+		TableName: aws.String(cl.Table),
+		Key:       mustMarshal(shortlink{PK: "s", From: from}),
 	})
 	if err != nil {
 		return ret, err
 	}
 
 	var s shortlink
-	if err := attributevalue.UnmarshalMap(gio.Item, &s); err != nil {
-		return ret, err
-	}
+	mustUnmarshal(gio.Item, &s)
 
 	return shortlinks.Shortlink{
 		From: s.From,
@@ -73,20 +81,15 @@ func (cl *Client) Shortlink(from string) (shortlinks.Shortlink, error) {
 }
 
 func (cl *Client) CreateShortlink(sl shortlinks.Shortlink) error {
-	av, err := attributevalue.MarshalMap(shortlink{
-		PK:   "s",
-		From: sl.From,
-		To:   sl.To,
+	if _, err := cl.DB.PutItem(context.Background(), &dynamodb.PutItemInput{
+		TableName: aws.String(cl.Table),
+		Item: mustMarshal(shortlink{
+			PK:   "s",
+			From: sl.From,
+			To:   sl.To,
 
-		Description: sl.Description,
-	})
-	if err != nil {
-		return err
-	}
-
-	if _, err := cl.db.PutItem(context.Background(), &dynamodb.PutItemInput{
-		TableName: aws.String(cl.table),
-		Item:      av,
+			Description: sl.Description,
+		}),
 	}); err != nil {
 		return err
 	}
@@ -96,13 +99,13 @@ func (cl *Client) CreateShortlink(sl shortlinks.Shortlink) error {
 
 func (cl *Client) pkShortlinks(pk string) ([]shortlinks.Shortlink, error) {
 	qi := &dynamodb.QueryInput{
-		TableName:              aws.String(cl.table),
+		TableName:              aws.String(cl.Table),
 		KeyConditionExpression: aws.String("pk = :pk"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":pk": &types.AttributeValueMemberS{Value: pk},
 		},
 	}
-	pager := dynamodb.NewQueryPaginator(cl.db, qi)
+	pager := dynamodb.NewQueryPaginator(cl.DB, qi)
 
 	ret := make([]shortlinks.Shortlink, 0, 100)
 	for pager.HasMorePages() {
@@ -113,9 +116,7 @@ func (cl *Client) pkShortlinks(pk string) ([]shortlinks.Shortlink, error) {
 
 		for _, itm := range o.Items {
 			var s shortlink
-			if err := attributevalue.UnmarshalMap(itm, &s); err != nil {
-				return ret, err
-			}
+			mustUnmarshal(itm, &s)
 			ret = append(ret, shortlinks.Shortlink{
 				From: s.From,
 				To:   s.To,
@@ -146,31 +147,22 @@ func (cl *Client) DeleteShortlink(from, who string) error {
 		return err
 	}
 
-	av, err := attributevalue.MarshalMap(shortlink{
-		PK:   "d",
-		From: sl.From,
-		To:   sl.To,
+	if _, err := cl.DB.PutItem(context.Background(), &dynamodb.PutItemInput{
+		TableName: aws.String(cl.Table),
+		Item: mustMarshal(shortlink{
+			PK:   "d",
+			From: sl.From,
+			To:   sl.To,
 
-		Description: sl.Description,
-	})
-	if err != nil {
-		return err
-	}
-
-	if _, err := cl.db.PutItem(context.Background(), &dynamodb.PutItemInput{
-		TableName: aws.String(cl.table),
-		Item:      av,
+			Description: sl.Description,
+		}),
 	}); err != nil {
 		return err
 	}
 
-	av, err = attributevalue.MarshalMap(shortlink{PK: "s", From: from})
-	if err != nil {
-		return err
-	}
-	_, err = cl.db.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
-		TableName: aws.String(cl.table),
-		Key:       av,
+	_, err = cl.DB.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
+		TableName: aws.String(cl.Table),
+		Key:       mustMarshal(shortlink{PK: "s", From: from}),
 	})
 	if err != nil {
 		return err
@@ -199,13 +191,13 @@ func (h history) From() string {
 
 func (cl *Client) History(from string) ([]shortlinks.History, error) {
 	qi := &dynamodb.QueryInput{
-		TableName:              aws.String(cl.table),
+		TableName:              aws.String(cl.Table),
 		KeyConditionExpression: aws.String("pk = :pk"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":pk": &types.AttributeValueMemberS{Value: "h" + from},
 		},
 	}
-	pager := dynamodb.NewQueryPaginator(cl.db, qi)
+	pager := dynamodb.NewQueryPaginator(cl.DB, qi)
 
 	ret := make([]shortlinks.History, 0, 100)
 	for pager.HasMorePages() {
@@ -216,9 +208,7 @@ func (cl *Client) History(from string) ([]shortlinks.History, error) {
 
 		for _, itm := range o.Items {
 			var h history
-			if err := attributevalue.UnmarshalMap(itm, &h); err != nil {
-				return ret, err
-			}
+			mustUnmarshal(itm, &h)
 			ret = append(ret, shortlinks.History{
 				From: h.From(),
 				To:   h.To,
@@ -234,21 +224,16 @@ func (cl *Client) History(from string) ([]shortlinks.History, error) {
 }
 
 func (cl *Client) InsertHistory(h shortlinks.History) error {
-	av, err := attributevalue.MarshalMap(history{
-		PK:   "h" + h.From,
-		When: time.Now().String(),
-		Who:  h.Who,
-		To:   h.To,
+	if _, err := cl.DB.PutItem(context.Background(), &dynamodb.PutItemInput{
+		TableName: aws.String(cl.Table),
+		Item: mustMarshal(history{
+			PK:   "h" + h.From,
+			When: time.Now().String(),
+			Who:  h.Who,
+			To:   h.To,
 
-		Description: h.Description,
-	})
-	if err != nil {
-		return err
-	}
-
-	if _, err := cl.db.PutItem(context.Background(), &dynamodb.PutItemInput{
-		TableName: aws.String(cl.table),
-		Item:      av,
+			Description: h.Description,
+		}),
 	}); err != nil {
 		return err
 	}
