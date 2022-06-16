@@ -1,17 +1,19 @@
 package sqlitestorage
 
 import (
-	_ "embed"
+	"embed"
 	"fmt"
+	"io/fs"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/frioux/dh"
 
 	"github.com/frioux/shortlinks/shortlinks"
 )
 
-//go:embed schema.sql
-var schema string
+//go:embed dh
+var dhFS embed.FS
 
 func Connect(dsn string) (*Client, error) {
 	if dsn == "" {
@@ -22,8 +24,22 @@ func Connect(dsn string) (*Client, error) {
 		return nil, err
 	}
 
-	if _, err := db.Exec(schema); err != nil {
-		return nil, fmt.Errorf("couldn't create schema: %s", err)
+	var found struct { C int }
+	const sql = `SELECT COUNT(*) AS c FROM main.sqlite_master WHERE "name" = 'dh_migrations' AND "type" = 'table'`;
+	if err := db.Get(&found, sql); err != nil {
+		return nil, fmt.Errorf("db.Get: %w", err)
+	}
+
+	e := dh.NewMigrator()
+	if found.C != 1 {
+		if err := e.MigrateOne(db, dh.DHMigrations, "000-sqlite"); err != nil {
+			return nil, fmt.Errorf("dh.Migrator.MigrateOne: %w", err)
+		}
+	}
+
+	fss, _ := fs.Sub(dhFS, "dh")
+	if err := e.MigrateAll(db, fss); err != nil {
+		return nil, fmt.Errorf("dh.Migrator.MigrateAll: %w", err)
 	}
 
 	return &Client{db: db}, nil
