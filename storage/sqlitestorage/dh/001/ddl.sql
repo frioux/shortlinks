@@ -1,4 +1,4 @@
-CREATE TABLE shortlinks (
+CREATE TABLE IF NOT EXISTS shortlinks (
         "from",
         "to",
         "deleted",
@@ -6,10 +6,11 @@ CREATE TABLE shortlinks (
         PRIMARY KEY ("from")
 );
 
-CREATE TABLE history (
+CREATE TABLE IF NOT EXISTS history (
         "from",
         "to",
         "when",
         "who",
         "description"
 );
+
