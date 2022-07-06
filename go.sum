@@ -156,5 +156,5 @@ gopkg.in/yaml.v2 v2.2.8/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.4.0 h1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=
 inet.af/netaddr v0.0.0-20220617031823-097006376321 h1:B4dC8ySKTQXasnjDTMsoCMf1sQG4WsMej0WXaHxunmU=
 inet.af/netaddr v0.0.0-20220617031823-097006376321/go.mod h1:OIezDfdzOgFhuw4HuWapWq2e9l0H9tK4F1j+ETRtF3k=
-tailscale.com v1.26.1 h1:b9Zqge5dOAtclPO3fGwArdtf5YdlyaRYlQfTRd7JD2s=
-tailscale.com v1.26.1/go.mod h1:eTdHYI3iFv/1+rCxh60KyY2QjVToVuvbhAR9UxKuigM=
+tailscale.com v1.26.2 h1:EBR0DXblI2Rx3mPe/YU29oZbQLnC8BtJYUTufmEygUY=
+tailscale.com v1.26.2/go.mod h1:KM47Ct0eNTFJqoazXV5XRdMnnWtD2HHDciY9RwyqweE=
