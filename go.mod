@@ -3,7 +3,7 @@ module github.com/frioux/shortlinks
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.16.9
+	github.com/aws/aws-sdk-go-v2 v1.16.10
 	github.com/aws/aws-sdk-go-v2/config v1.15.16
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.9.9
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.11
@@ -27,7 +27,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.11 // indirect
-	github.com/aws/smithy-go v1.12.0 // indirect
+	github.com/aws/smithy-go v1.12.1 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/native v1.0.0 // indirect
