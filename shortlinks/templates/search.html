@@ -1,0 +1,14 @@
+{{ template "z_header.html" .}}
+{{ template "form.html" .}}
+
+<p><b>{{.Path}}</b> wasn't found, did you mean one of these?:</p>
+
+<ul>
+{{range .Shortlinks}}
+<li><a href="{{.To}}">{{.From}}</a> {{if ne .Description ""}} {{.Description}}{{end}}</li>
+{{end}}
+</ul>
+
+<div><a href="/">or go to the index</a></div>
+<br>
+{{ template "z_footer.html" .}}

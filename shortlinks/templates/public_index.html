@@ -2,7 +2,7 @@
 
 <ul>
 {{range .Shortlinks}}
-<li><a href="{{.To}}">{{.From}}</a>{{if ne .Description ""}}<p>{{.Description}}</p>{{end}}</li>
+<li><a href="{{.To}}">{{.From}}</a>{{if ne .Description ""}} {{.Description}}{{end}}</li>
 {{end}}
 </ul>
 

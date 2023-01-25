@@ -1,13 +1,14 @@
 package sqlitestorage
 
 import (
+	"database/sql"
 	"embed"
 	"fmt"
 	"io/fs"
 
+	"github.com/frioux/dh"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/frioux/dh"
 
 	"github.com/frioux/shortlinks/shortlinks"
 )
@@ -24,8 +25,8 @@ func Connect(dsn string) (*Client, error) {
 		return nil, err
 	}
 
-	var found struct { C int }
-	const sql = `SELECT COUNT(*) AS c FROM main.sqlite_master WHERE "name" = 'dh_migrations' AND "type" = 'table'`;
+	var found struct{ C int }
+	const sql = `SELECT COUNT(*) AS c FROM main.sqlite_master WHERE "name" = 'dh_migrations' AND "type" = 'table'`
 	if err := db.Get(&found, sql); err != nil {
 		return nil, fmt.Errorf("db.Get: %w", err)
 	}
@@ -53,9 +54,10 @@ func (c Client) Shortlink(from string) (shortlinks.Shortlink, error) {
 	ret := shortlinks.Shortlink{}
 	err := c.db.Get(&ret, `SELECT "from", "to", "description" FROM shortlinks WHERE "from" = ? AND "deleted" IS NULL`, from)
 
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return ret, fmt.Errorf("couldn't load shortlink (%s): %w", from, err)
 	}
+
 	return ret, nil
 }
 
