@@ -62,14 +62,12 @@ func mustUnmarshal(av map[string]types.AttributeValue, d interface{}) {
 }
 
 func (cl *Client) Shortlink(from string) (shortlinks.Shortlink, error) {
-	var ret shortlinks.Shortlink
-
 	gio, err := cl.DB.GetItem(context.Background(), &dynamodb.GetItemInput{
 		TableName: aws.String(cl.Table),
 		Key:       mustMarshal(shortlink{PK: pkShortlink, From: from}),
 	})
 	if err != nil {
-		return ret, err
+		return shortlinks.Shortlink{}, err
 	}
 
 	var s shortlink
