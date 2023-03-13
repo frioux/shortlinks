@@ -30,6 +30,22 @@ $ shortlinks --listen :8081 --db file:shortlinks.db
 
 Then navigate to `http://localhost:8081` and create your first shortlink!
 
+## Variables
+
+In addition to simple links, a single `%s` can be added to a link to be filled out based on what the input URL is.
+
+Here's a table of some examples:
+
+| From  | Query                          | To                                | Result                                            |
+|-------|--------------------------------|-----------------------------------|---------------------------------------------------|
+| j     | j                              | https://atlassian.net/browse/%s   | https://atlassian.net/browse/                     |
+| j     | j/JIRA-000                     | https://atlassian.net/browse/%s   | https://atlassian.net/browse/JIRA-000             |
+| some  | some/firstquery/secondquery    | https://some.url/%s/else          | https://some.url/firstquery/secondquery/else      |
+| other | other/firstquery/secondquery   | https://some.url/%s/else/%s       | https://some.url/firstquery/secondquery/else/%s   |
+
+Note that only 1 substution is performed. If more than one `%s` is in the To value, the rest will be ignored.
+If no argument is given then empty string, "" is used.
+
 ## Custom Drivers
 
 This tool is built to be easy to run using SQLite.  If you want to use some

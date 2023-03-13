@@ -1,10 +1,11 @@
 package shortlinks
 
 import (
-	"github.com/hbollon/go-edlib"
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/hbollon/go-edlib"
 )
 
 type index struct {
@@ -16,16 +17,16 @@ type search struct {
 	Shortlinks []Shortlink
 }
 
-func (i index) Title() string  { return "go links" }
-func (i index) To() string     { return "" }
-func (i index) From() string   { return "" }
-func (i index) Submit() string { return "Create" }
+func (i index) Title() string       { return "go links" }
+func (i index) To() string          { return "" }
+func (i index) From() string        { return "" }
+func (i index) Submit() string      { return "Create" }
 func (i index) Description() string { return "" }
 
-func (s search) Title() string  { return "go links" }
-func (s search) To() string     { return "" }
-func (s search) From() string   { return "" }
-func (s search) Submit() string { return "Create" }
+func (s search) Title() string       { return "go links" }
+func (s search) To() string          { return "" }
+func (s search) From() string        { return "" }
+func (s search) Submit() string      { return "Create" }
 func (s search) Description() string { return "" }
 
 type scoredShortlink struct {
@@ -62,6 +63,24 @@ func possibleMatches(shortlinks []Shortlink, path string, resultSize int) []Shor
 	return shortlinks[:min(resultSize, len(shortlinks))]
 }
 
+// split splits the path string into the path to query the database with and the string subsitution value
+func split(path string) (string, string) {
+	path = path[1:]
+	indexOfSlash := strings.Index(path, "/")
+	if indexOfSlash == -1 {
+		return path, ""
+	}
+	prefix := path[0 : indexOfSlash-1]
+	suffix := path[indexOfSlash+1:]
+	return prefix, suffix
+
+}
+
+// substitute returns the shortlink's To field with the provided substition added
+func substitute(shortlink Shortlink, substitution string) string {
+	return strings.Replace(shortlink.To, "%s", substitution, 1)
+}
+
 func indexHandler(db PublicDB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
@@ -78,7 +97,7 @@ func indexHandler(db PublicDB) http.Handler {
 			}
 			return
 		} else {
-			path := strings.TrimPrefix(r.URL.Path, "/")
+			path, substitution := split(r.URL.Path)
 			sl, err := db.Shortlink(path)
 			if err != nil {
 				_500(w, err)
@@ -101,7 +120,8 @@ func indexHandler(db PublicDB) http.Handler {
 				}
 				return
 			} else {
-				w.Header().Add("Location", sl.To)
+				to := substitute(sl, substitution)
+				w.Header().Add("Location", to)
 				w.WriteHeader(302)
 			}
 		}
