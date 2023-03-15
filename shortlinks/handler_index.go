@@ -70,7 +70,7 @@ func split(path string) (string, string) {
 	if indexOfSlash == -1 {
 		return path, ""
 	}
-	prefix := path[0 : indexOfSlash-1]
+	prefix := path[0 : indexOfSlash]
 	suffix := path[indexOfSlash+1:]
 	return prefix, suffix
 
