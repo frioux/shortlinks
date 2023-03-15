@@ -1,6 +1,7 @@
 package shortlinks
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -31,8 +32,12 @@ func TestSubstitute(t *testing.T) {
 
 	for _, test := range cases {
 		s := Shortlink{To: test.to}
-		_, substitutions := split(test.path)
-		url := substitute(s, substitutions)
+		prefix, substitution := split(test.path)
+		expectedPrefix := strings.Split(prefix, "/")[0]
+		if prefix != expectedPrefix {
+			t.Errorf("Expected path: %q to have prefix %q but found %q", test.path, expectedPrefix, prefix)
+		}
+		url := substitute(s, substitution)
 		if url != test.expected {
 			t.Errorf("URL as a result of substitute did match expected,\npath: %q\nto: %q\nactual url:\t\t%q\nexpected url:\t%q", test.path, test.to, url, test.expected)
 		}
