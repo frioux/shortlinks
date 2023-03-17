@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.6
-	github.com/aws/aws-sdk-go-v2/config v1.18.17
+	github.com/aws/aws-sdk-go-v2/config v1.18.18
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.18
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.1
 	github.com/frioux/dh v0.0.0-20220615053643-86559e96dc25
