@@ -11,7 +11,7 @@ require (
 	github.com/hbollon/go-edlib v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.17
-	tailscale.com v1.42.0
+	tailscale.com v1.42.1
 )
 
 require (
