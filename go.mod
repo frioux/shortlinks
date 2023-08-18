@@ -3,7 +3,7 @@ module github.com/frioux/shortlinks
 go 1.19
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.20.1
+	github.com/aws/aws-sdk-go-v2 v1.20.2
 	github.com/aws/aws-sdk-go-v2/config v1.18.33
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.36
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.2
