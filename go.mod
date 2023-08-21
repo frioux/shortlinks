@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.20.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.33
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.37
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.38
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.4
 	github.com/frioux/dh v0.0.0-20220615053643-86559e96dc25
 	github.com/hbollon/go-edlib v1.6.0
@@ -24,7 +24,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.40 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.34 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.39 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.15.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.15.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.34 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.32 // indirect
