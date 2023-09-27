@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.42
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.39
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.21.5
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.22.0
 	github.com/frioux/dh v0.0.0-20220615053643-86559e96dc25
 	github.com/hbollon/go-edlib v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
