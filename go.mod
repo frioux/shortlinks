@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.25.2
 	github.com/aws/aws-sdk-go-v2/config v1.27.6
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.6
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.7
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.30.2
 	github.com/frioux/dh v0.0.0-20220615053643-86559e96dc25
 	github.com/hbollon/go-edlib v1.6.0
