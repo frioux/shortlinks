@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/aws/aws-sdk-go-v2 v1.26.2
 	github.com/aws/aws-sdk-go-v2/config v1.27.14
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.15
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.32.1
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.16
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.32.2
 	github.com/frioux/dh v0.0.0-20220615053643-86559e96dc25
 	github.com/hbollon/go-edlib v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
@@ -24,9 +24,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.20.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.20.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.20.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.24.1 // indirect
